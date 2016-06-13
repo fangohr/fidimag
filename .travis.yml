@@ -22,7 +22,8 @@ install:
   - source activate fidimag-test
   - pip install pyvtk six nbval
   # Download and compile FFTW & Sundials locally
-  - bash bin/install.sh
+  - bash bin/install-fftw.sh
+  - bash bin/install-sundials.sh
 
 before_script:
         - make build

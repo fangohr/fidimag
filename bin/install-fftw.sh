@@ -3,7 +3,6 @@
 # This script installs SUNDIALS and FFTW locally. It may need to environment
 # variables to work, like 'export CC=gcc' in ARCHER.
 
-SUNDIALS=sundials-2.5.0
 FFTW=fftw-3.3.4
 
 set -e
@@ -15,7 +14,7 @@ FIDIMAG_DIR="$(dirname "$HERE_DIR")"
 LIBS_DIR=${FIDIMAG_DIR}/local
 mkdir -p $LIBS_DIR
 cd ${LIBS_DIR}
-echo "Installing SUNDIALS and FFTW to "$LIBS_DIR"."
+echo "Installing FFTW to "$LIBS_DIR"."
 echo "Using CC="$CC" "
 
 download_and_install() {
@@ -42,7 +41,6 @@ download_and_install() {
     fi;
 }
 
-download_and_install ${SUNDIALS} http://ftp.mcs.anl.gov/pub/petsc/externalpackages --disable-lapack
 download_and_install ${FFTW} http://www.fftw.org --enable-openmp
 
 echo "Installation succesful."
