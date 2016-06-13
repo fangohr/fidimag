@@ -18,23 +18,23 @@ cdef struct cv_userdata:
 
 
 cdef inline copy_arr2nv(np.ndarray[realtype, ndim=1, mode='c'] np_x, N_Vector v):
-    cdef long int n = (<N_VectorContent_Serial>v.content).length
+    cdef long int n = (<N_VectorContent_OpenMP>v.content).length
     cdef void* data_ptr=<void *>np_x.data
-    memcpy((<N_VectorContent_Serial>v.content).data, data_ptr, n*sizeof(double))
+    memcpy((<N_VectorContent_OpenMP>v.content).data, data_ptr, n*sizeof(double))
     return 0
 
 
 cdef inline copy_nv2arr(N_Vector v, np.ndarray[realtype, ndim=1, mode='c'] np_x):
-    cdef long int n = (<N_VectorContent_Serial>v.content).length
-    cdef double* v_data = (<N_VectorContent_Serial>v.content).data
+    cdef long int n = (<N_VectorContent_OpenMP>v.content).length
+    cdef double* v_data = (<N_VectorContent_OpenMP>v.content).data
     memcpy(np_x.data, v_data, n*sizeof(realtype))
     return 0
 
 
 cdef copy_nv2nv(N_Vector v_dest, N_Vector v_src):
-    cdef size_t n = (<N_VectorContent_Serial>v_dest.content).length
-    cdef realtype *v_dest_data = (<N_VectorContent_Serial>v_dest.content).data
-    cdef realtype *v_src_data = (<N_VectorContent_Serial>v_src.content).data
+    cdef size_t n = (<N_VectorContent_OpenMP>v_dest.content).length
+    cdef realtype *v_dest_data = (<N_VectorContent_OpenMP>v_dest.content).data
+    cdef realtype *v_src_data = (<N_VectorContent_OpenMP>v_src.content).data
     memcpy(v_dest_data, v_src_data, n * sizeof(realtype))
     return 0;
 
@@ -139,7 +139,7 @@ cdef class CvodeSolver(object):
         self.y[:] = spin[:]
 
         cdef np.ndarray[double, ndim=1, mode="c"] y = self.y
-        self.u_y = N_VMake_Serial(y.size, &y[0])
+        self.u_y = N_VMake_OpenMP(y.size, &y[0], 2)
 
         if self.cvode_already_initialised:
             flag = CVodeReInit(self.cvode_mem, t, self.u_y)
@@ -245,5 +245,5 @@ cdef class CvodeSolver(object):
         self.user_data.dm_dt = NULL
         self.user_data.v = NULL
         self.user_data.jv = NULL
-        N_VDestroy_Serial(self.u_y)
+        N_VDestroy_OpenMP(self.u_y)
         CVodeFree(&self.cvode_mem)

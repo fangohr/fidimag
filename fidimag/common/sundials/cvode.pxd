@@ -8,18 +8,21 @@ cdef extern from "sundials/sundials_nvector.h":
         void *content
         
     ctypedef _generic_N_Vector *N_Vector
-    N_Vector N_VNew_Serial(long int vec_length)
-    void N_VDestroy_Serial(N_Vector v)
-    void N_VPrint_Serial(N_Vector v)
+    N_Vector N_VNew_OpenMP(long int vec_length)
+    void N_VDestroy_OpenMP(N_Vector v)
+    void N_VPrint_OpenMP(N_Vector v)
 
-cdef extern from "nvector/nvector_serial.h":
-    cdef N_Vector N_VMake_Serial(long int vec_length, realtype *v_data)
+cdef extern from "nvector/nvector_openmp.h":
+    cdef N_Vector N_VMake_OpenMP(long int vec_length, realtype *v_data,
+    int num_threads)
     
-    cdef struct _N_VectorContent_Serial:
+    cdef struct _N_VectorContent_OpenMP:
         long int length
+        booleantype own_data
         realtype *data
+        int num_threads
         
-    ctypedef _N_VectorContent_Serial *N_VectorContent_Serial
+    ctypedef _N_VectorContent_OpenMP *N_VectorContent_OpenMP
 
 	
 
