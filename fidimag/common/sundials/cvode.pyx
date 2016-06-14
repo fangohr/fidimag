@@ -93,8 +93,9 @@ cdef class CvodeSolver(object):
     cdef int has_jtimes
     cdef str linear_solver
 
-    def __cinit__(self, spins, rhs_fun, jtimes_fun=None, linear_solver="spgmr", rtol=1e-8, atol=1e-8):
+    def __cinit__(self, spins, rhs_fun, jtimes_fun=None, linear_solver="spgmr", rtol=1e-8, atol=1e-8, num_threads=1):
         self.t = 0
+	self.num_threads = num_threads
         self.y0 = spins
         self.dm_dt = np.copy(spins)
         self.y = np.copy(spins)
@@ -134,12 +135,12 @@ cdef class CvodeSolver(object):
         copy_arr2nv(spin, self.u_y)
         CVodeReInit(self.cvode_mem, t, self.u_y)
 
-    def set_initial_value(self, np.ndarray[double, ndim=1, mode="c"] spin, t, num_threads=1):
+    def set_initial_value(self, np.ndarray[double, ndim=1, mode="c"] spin, t):
         self.t = t
         self.y[:] = spin[:]
 
         cdef np.ndarray[double, ndim=1, mode="c"] y = self.y
-        self.u_y = N_VMake_OpenMP(y.size, &y[0], num_threads)
+        self.u_y = N_VMake_OpenMP(y.size, &y[0], self.num_threads)
 
         if self.cvode_already_initialised:
             flag = CVodeReInit(self.cvode_mem, t, self.u_y)
