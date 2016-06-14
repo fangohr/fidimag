@@ -95,7 +95,7 @@ cdef class CvodeSolver(object):
 
     def __cinit__(self, spins, rhs_fun, jtimes_fun=None, linear_solver="spgmr", rtol=1e-8, atol=1e-8, num_threads=1):
         self.t = 0
-	self.num_threads = num_threads
+        self.num_threads = num_threads
         self.y0 = spins
         self.dm_dt = np.copy(spins)
         self.y = np.copy(spins)
