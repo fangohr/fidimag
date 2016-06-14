@@ -92,6 +92,7 @@ cdef class CvodeSolver(object):
     cdef int max_num_steps
     cdef int has_jtimes
     cdef str linear_solver
+    cdef int num_threads
 
     def __cinit__(self, spins, rhs_fun, jtimes_fun=None, linear_solver="spgmr", rtol=1e-8, atol=1e-8, num_threads=1):
         self.t = 0
@@ -141,7 +142,7 @@ cdef class CvodeSolver(object):
 
         cdef np.ndarray[double, ndim=1, mode="c"] y = self.y
         self.u_y = N_VMake_OpenMP(y.size, &y[0], self.num_threads)
-
+	
         if self.cvode_already_initialised:
             flag = CVodeReInit(self.cvode_mem, t, self.u_y)
             self.check_flag(flag, "CVodeReInit")
