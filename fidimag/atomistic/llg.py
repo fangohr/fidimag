@@ -12,12 +12,12 @@ import fidimag.common.constant as const
 
 class LLG(object):
 
-    def __init__(self, mesh, name='unnamed', use_jac=False):
+    def __init__(self, mesh, name='unnamed', use_jac=False, num_threads=1):
         """Simulation object.
         *Arguments*
           name : the Simulation name (used for writing data files, for examples)
         """
-
+        self.num_threads = num_threads
         self.t = 0
         self.name = name
         self.mesh = mesh
@@ -65,10 +65,10 @@ class LLG(object):
         self.vtk = SaveVTK(self.mesh, name=name)
 
         if use_jac is not True:
-            self.vode = cvode.CvodeSolver(self.spin, self.sundials_rhs)
+            self.vode = cvode.CvodeSolver(self.spin, self.sundials_rhs, self.num_threads)
         else:
             self.vode = cvode.CvodeSolver(
-                self.spin, self.sundials_rhs, self.sundials_jtn)
+                self.spin, self.sundials_rhs, self.sundials_jtn, self.num_threads)
 
         self.set_default_options()
 
