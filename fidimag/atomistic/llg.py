@@ -65,10 +65,10 @@ class LLG(object):
         self.vtk = SaveVTK(self.mesh, name=name)
 
         if use_jac is not True:
-            self.vode = cvode.CvodeSolver(self.spin, self.sundials_rhs, self.num_threads)
+            self.vode = cvode.CvodeSolver(self.spin, self.sundials_rhs, num_threads=self.num_threads)
         else:
             self.vode = cvode.CvodeSolver(
-                self.spin, self.sundials_rhs, self.sundials_jtn, self.num_threads)
+                self.spin, self.sundials_rhs, self.sundials_jtn, num_threads=self.num_threads)
 
         self.set_default_options()
 
