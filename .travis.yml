@@ -18,7 +18,7 @@ before_install:
   - export PATH=/home/travis/miniconda/bin:$PATH
 
 install:
-  - conda create -q -y -n fidimag-test python=$TRAVIS_PYTHON_VERSION cython matplotlib pytest scipy pytest-cov
+  - conda create -q -y -n fidimag-test python=$TRAVIS_PYTHON_VERSION cython matplotlib pytest scipy pytest-cov cmake
   - source activate fidimag-test
   - pip install pyvtk six nbval
   # Download and compile FFTW & Sundials locally
