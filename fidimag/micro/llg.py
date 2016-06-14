@@ -15,7 +15,7 @@ import re
 
 class LLG(object):
 
-    def __init__(self, mesh, name='unnamed', integrator='sundials', use_jac=False):
+    def __init__(self, mesh, name='unnamed', integrator='sundials', use_jac=False, num_threads=1):
         """Simulation object.
 
         *Arguments*
@@ -23,6 +23,7 @@ class LLG(object):
           name : the Simulation name (used for writing data files, for examples)
 
         """
+        self.num_threads=num_threads
         self.t = 0
         self.name = name
         self.mesh = mesh
@@ -45,9 +46,9 @@ class LLG(object):
         if integrator == "sundials" and use_jac:
             self.integrator = SundialsIntegrator(self.spin, self.sundials_rhs, self.sundials_jtimes)
         elif integrator == "sundials_diag":
-            self.integrator = SundialsIntegrator(self.spin, self.sundials_rhs, linear_solver="diag")
+            self.integrator = SundialsIntegrator(self.spin, self.sundials_rhs, linear_solver="diag", num_threads=self.num_threads)
         elif integrator == "sundials":
-            self.integrator = SundialsIntegrator(self.spin, self.sundials_rhs)
+            self.integrator = SundialsIntegrator(self.spin, self.sundials_rhs, num_threads=self.num_threads)
         elif integrator == "euler" or integrator == "rk4":
             self.integrator = StepIntegrator(self.spin, self.step_rhs, integrator)
         else:
