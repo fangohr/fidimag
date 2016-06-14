@@ -134,12 +134,12 @@ cdef class CvodeSolver(object):
         copy_arr2nv(spin, self.u_y)
         CVodeReInit(self.cvode_mem, t, self.u_y)
 
-    def set_initial_value(self, np.ndarray[double, ndim=1, mode="c"] spin, t):
+    def set_initial_value(self, np.ndarray[double, ndim=1, mode="c"] spin, t, num_threads=1):
         self.t = t
         self.y[:] = spin[:]
 
         cdef np.ndarray[double, ndim=1, mode="c"] y = self.y
-        self.u_y = N_VMake_OpenMP(y.size, &y[0], 2)
+        self.u_y = N_VMake_OpenMP(y.size, &y[0], num_threads)
 
         if self.cvode_already_initialised:
             flag = CVodeReInit(self.cvode_mem, t, self.u_y)
